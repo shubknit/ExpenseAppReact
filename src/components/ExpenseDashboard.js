@@ -6,33 +6,30 @@ import { AddExpense } from './AddExpense';
 import { EditExpense } from './EditExpense';
 import uuid from 'uuid';
 
+
+
 export class ExpenseDashboard extends Component {
 	constructor() {
 		super();
-		this.state = {
-			expenseList: [
-				{
-					id: uuid.v1(),
-					description: 'text1',
-					date: '01/2/2019',
-					amount: 1000,
-					note: 'note1'
-
-				},
-				{
-					id: uuid.v1(),
-					description: 'text2',
-					date: '01/2/2020',
-					amount: 12000,
-					note: 'note2'
-
-				}
-			]
-		}
+		this.saveState();
 		this.addExpense = this.addExpense.bind(this);
 		this.removeExpense = this.removeExpense.bind(this);	
 		this.addEditExpense = this.addEditExpense.bind(this);	
 	}
+	saveState(){
+		localStorage.getItem('expenseData') ? 
+		this.state = {
+			expenseList : JSON.parse(localStorage.getItem('expenseData')) 
+		} : this.state = {
+			expenseList: [
+				
+			]
+		}
+	}
+	setLocalStorage(data){
+		localStorage.setItem('expenseData', JSON.stringify(data));
+	}
+
 	getExpenseTotal(){
 		let amount = 0 ;
 	 	const { expenseList } = this.state;
@@ -46,6 +43,10 @@ export class ExpenseDashboard extends Component {
 		this.setState({
 			expenseList: [...this.state.expenseList, newExpense]
 		})
+	}
+
+	componentDidUpdate(){
+		this.setLocalStorage(this.state.expenseList);
 	}
 
 	removeExpense(itemId){
