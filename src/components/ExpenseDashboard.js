@@ -4,17 +4,19 @@ import { ExpenseCount } from './ExpenseCount';
 import { ExpenseList } from './ExpenseList';
 import { AddExpense } from './AddExpense';
 import { EditExpense } from './EditExpense';
+import { ExpenseFilters } from './ExpenseFilters';
 import uuid from 'uuid';
-
 
 
 export class ExpenseDashboard extends Component {
 	constructor() {
 		super();
+		let filteredData;
 		this.saveState();
 		this.addExpense = this.addExpense.bind(this);
 		this.removeExpense = this.removeExpense.bind(this);	
 		this.addEditExpense = this.addEditExpense.bind(this);	
+		this.getFilteredData = this.getFilteredData.bind(this);	
 	}
 	saveState(){
 		localStorage.getItem('expenseData') ? 
@@ -45,9 +47,6 @@ export class ExpenseDashboard extends Component {
 		})
 	}
 
-	componentDidUpdate(){
-		this.setLocalStorage(this.state.expenseList);
-	}
 
 	removeExpense(itemId){
 		var updateData = this.state.expenseList.filter((data) =>  data.id !== itemId)
@@ -70,13 +69,24 @@ export class ExpenseDashboard extends Component {
 		})			
 	}
 
+	getFilteredData(data){
+		this.filteredData = data;
+		console.log(this.filteredData);
+		this.forceUpdate();
+	}
+	componentDidUpdate(){
+		this.filteredData = null;
+		this.setLocalStorage(this.state.expenseList);
+	}
+
 	render(){
 		const location = this.props.location.pathname;
 		let  expenseString ;
-	    if(location === '/dashboard') {
-			expenseString = <div className = 'main-dashboard'>
+	  if(location === '/dashboard') {
+	  	expenseString = <div className = 'main-dashboard'>
 			<ExpenseCount noOfExpenses = { this.state.expenseList.length } expenseTotal = { this.getExpenseTotal() }/>
-				<ExpenseList expenseList = { this.state.expenseList } removeItem = {this.removeExpense}/> </div>
+			<ExpenseFilters expenseData = {this.state.expenseList} getFilteredData = {this.getFilteredData}/>
+			<ExpenseList expenseList = { (!this.filteredData) ? this.state.expenseList : this.filteredData } removeItem = {this.removeExpense}/> </div>
 		}
 		else if(location === '/create'){
 			expenseString = <AddExpense addNew = {this.addExpense} {...this.props}/>
