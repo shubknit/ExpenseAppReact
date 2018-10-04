@@ -12,12 +12,6 @@ const filteredData = (event) => {
 			<div className="input-group__item">
 				<input type="text" className="text-input" placeholder="Search expenses"  onChange = {filteredData}/>
 			</div>
-			<div className="input-group__item">
-				<select className="select">
-					<option value="date">Date</option>
-					<option value="amount">Amount</option>
-				</select>
-			</div>
 		</div>
 	</div>
 	)	
